@@ -1,37 +1,46 @@
-from fastapi import FastAPI
-from pydantic import BaseModel, constr, validator
-
-# models
+from pydantic import BaseModel, field_validator, ValidationError
+import uuid
 
 # studentNumber
+class StudentNumber(BaseModel):
+    student_number: int
 
+    @field_validator('student_number')
+    @classmethod
+    def valid_year(cls, number):
+        number_str = str(number)
+        if len(number_str) != 11:
+            raise ValueError("Studen Number must have 11 Digits")
+        if number_str[:3] not in ['400', '401', '402']:
+            raise ValueError("Student Number Year Part is not correct")
+        if number_str[3:9] != "114150":
+            raise ValueError("Student Number Const Part is Wrong")
+        if int(number_str[9:12]) not in range(0,100):
+            raise ValueError("Student Number Andis Part is Wrong") 
+        return number
+    
+# global user
+class User(BaseModel):
+    username : str = "visitor"
+    full_name : str 
+    email : str = "example@gmail.com"
+    phone_line: str 
+    phone_landline: str = None
+    address : str
+    id_number : str
+    id_serial : str
+    
+# Student of Uni
+class Student(User):
+    student_number: str
+    field_of_study : str
+    faculty: str
+    is_mirage: bool
+    is_active : bool
+        
+# Lecturer of Uni
+class Lecturer(User):
+    lecturer_number: str
+    id_number: str
+    is_active: bool
 
-class StudentId(BaseModel):
-    studentNumber: constr
-
-    @validator('studentNumber')
-    def check_length(cls, v):
-        if len(v) != 11:
-            raise ValueError('Student number must be 11 digits long')
-        return v
-
-    @validator('studentNumber')
-    def check_prefix(cls, v):
-        prefix = v[:3]
-        if prefix not in ('400', '401', '402'):
-            raise ValueError('First 3 digits must be 400, 401, or 402')
-        return v
-
-    @validator('studentNumber')
-    def check_middle(cls, v):
-        middle = v[3:9]
-        if middle != '114150':
-            raise ValueError('Middle 6 digits must be 114150')
-        return v
-
-    @validator('studentNumber')
-    def check_range(cls, v):
-        last_two = int(v[9:])
-        if not 1 <= last_two <= 99:
-            raise ValueError('Last 2 digits must be in the range [01, 99]')
-        return v

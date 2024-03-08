@@ -1,2 +1,3 @@
-<h4>Advanced Programming Project for University</h4>
-Based On FastAPI
+<h4>Advanced Programming Course - University: lu.ac.ir</h4>
+
+A Website Based On FastAPI For University Students

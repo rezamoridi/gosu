@@ -1,9 +1,12 @@
-from pydantic import BaseModel, field_validator, ValidationError
+from pydantic import BaseModel, field_validator, conint
 import uuid
 
 # studentNumber
 class StudentNumber(BaseModel):
     student_number: int
+
+    def __str__(cls):
+        return f"{cls.student_number}"
 
     @field_validator('student_number')
     @classmethod

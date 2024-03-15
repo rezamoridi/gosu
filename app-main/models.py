@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, conint
+from pydantic import BaseModel, field_validator, Field
 import uuid
 
 # studentNumber
@@ -25,17 +25,24 @@ class StudentNumber(BaseModel):
 # global user
 class User(BaseModel):
     username : str = "visitor"
-    full_name : str 
+    name : str  = "user"
     email : str = "example@gmail.com"
-    phone_line: str 
+    phone_line: int = 0
     phone_landline: str = None
-    address : str
-    id_number : str
-    id_serial : str
+    address : str = None
+    id_number : int = 0
+    id_serial : str = 0
+
+    @field_validator('name')
+    @classmethod
+    def valid_name(cls, v):
+        if v == 'reza':
+            raise ValueError("Use only chars")
+        return v
     
 # Student of Uni
 class Student(User):
-    student_number: str
+    student_number: StudentNumber
     field_of_study : str
     faculty: str
     is_mirage: bool
@@ -46,4 +53,3 @@ class Lecturer(User):
     lecturer_number: str
     id_number: str
     is_active: bool
-

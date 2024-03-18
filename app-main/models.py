@@ -1,5 +1,5 @@
-from pydantic import BaseModel, field_validator, Field
-import uuid
+from pydantic import BaseModel, field_validator, Field, constr
+from persiantools.jdatetime import JalaliDate
 
 # studentNumber
 class StudentNumber(BaseModel):
@@ -22,10 +22,25 @@ class StudentNumber(BaseModel):
             raise ValueError("Student Number Andis Part is Wrong") 
         return number
     
+class Name(BaseModel):
+    name : constr(max_length=10, pattern=r'^[\u0600-\u06FF\s]+$') # type: ignore
+
+    @field_validator('name')
+    @classmethod
+    def valid_name(cls, v):
+        forbiden_chars = '۱۲۳۴۵۶۷۸۹۰'
+        for i in sorted(v, reverse=True):
+            for j in forbiden_chars:
+                if i == j:
+                    raise ValueError("Name Error: Use only chars")
+        return v
+        
+        
 # global user
 class User(BaseModel):
+    name : Name
     username : str = "visitor"
-    name : str  = "user"
+    birthdate : JalaliDate
     email : str = "example@gmail.com"
     phone_line: int = 0
     phone_landline: str = None
@@ -33,17 +48,12 @@ class User(BaseModel):
     id_number : int = 0
     id_serial : str = 0
 
-    @field_validator('name')
-    @classmethod
-    def valid_name(cls, v):
-        if v == 'reza':
-            raise ValueError("Use only chars")
-        return v
     
 # Student of Uni
 class Student(User):
     student_number: StudentNumber
     field_of_study : str
+    birthdate : BirthDate
     faculty: str
     is_mirage: bool
     is_active : bool
@@ -53,3 +63,5 @@ class Lecturer(User):
     lecturer_number: str
     id_number: str
     is_active: bool
+
+

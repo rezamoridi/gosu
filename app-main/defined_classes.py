@@ -1,6 +1,7 @@
 from pydantic import Field, constr, field_validator, BaseModel
 from persiantools import jdatetime
 import re
+from states import iran_states
 
 """"
             Class Models 
@@ -101,3 +102,18 @@ class SerialId(BaseModel):
         if not re.match(pattern=r'^[\u0600-\u06FF\s]+$', string=v):
             raise ValueError("Serial-id Char Must be in persian alphba")
         return v
+    
+
+
+
+#State
+class BirthState(BaseModel):
+    state: str = Field(min_length=3, max_length=20)
+
+    @field_validator('state')
+    @classmethod
+    def valid_state(cls, v):
+        if v not in iran_states:
+            raise ValueError("State Error , Please insert a Valid State")
+        return v
+        

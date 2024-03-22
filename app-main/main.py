@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 # Import Models
-from defined_classes import StudentNumber, Name, Date, SerialId
+from defined_classes import StudentNumber, Name, Date, SerialId, BirthState
 
 
 # Instance
@@ -90,9 +90,22 @@ def valid_date(date: Date):
 
 """valid Serial ID
         POST"""
+
+
 @app.post("/serial-id/", response_model=SerialId)
 def valid_serial(serial_id: SerialId):
     try:
-        serial_id
+        return serial_id
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+
+
+"""valid State
+        POST"""
+
+@app.post("/state/", response_model=BirthState)
+def valid_state(state: BirthState):
+    try:
+        return state
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=e.errors)

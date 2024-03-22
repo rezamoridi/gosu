@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 # Import Models
-from models import StudentNumber, Name, Date
+from defined_classes import StudentNumber, Name, Date, SerialId
 
 
 # Instance
@@ -27,8 +27,10 @@ async def show_form(request: Request):
     # Render the HTML form
     return templates.TemplateResponse(request=request, name="index.html")""" # Template -< 
 
+
 """valid studentNumber
         Path Parameter"""
+
 
 @app.get("/{studentNumber}", response_model=StudentNumber)
 def valid_sn_path(studentNumber: int):
@@ -37,8 +39,10 @@ def valid_sn_path(studentNumber: int):
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
 """valid studentNumber
         Query Parameter"""
+
 
 @app.get("/", response_model=StudentNumber)
 def valid_sn_query(studentNumber: int):
@@ -47,8 +51,10 @@ def valid_sn_query(studentNumber: int):
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
 """valid studentNumber
         Post Body"""
+
 
 @app.post("/", response_model=StudentNumber)
 def post_student_number(studentNumber: StudentNumber):
@@ -57,8 +63,10 @@ def post_student_number(studentNumber: StudentNumber):
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=e.errors()[0]["msg"])
     
+
 """valid name
         POST"""
+
 
 @app.post("/name/", response_model=Name)
 def valid_name(name: Name):
@@ -67,12 +75,24 @@ def valid_name(name: Name):
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=e.errors)
     
+
 """valid date
         POST"""
+
 
 @app.post("/date/", response_model=Date)
 def valid_date(date: Date):
     try:
         return date
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+
+
+"""valid Serial ID
+        POST"""
+@app.post("/serial-id/", response_model=SerialId)
+def valid_serial(serial_id: SerialId):
+    try:
+        serial_id
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=e.errors)

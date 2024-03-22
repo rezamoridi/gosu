@@ -2,18 +2,13 @@
 
 A Website Based On FastAPI For University Students
 
-
 <div>
-    <li>Folders Explain:</li>
+    <h1>Folders:</h1>
     <div>
-        <div>
-            <li>
-                <li style="color: blue;">app-main</li>
-                <li>gosu-venv</li>
-                <li>statics</li>
-                <li>templates</li>
-                <li>test</li>
-            </li>
-        </div>
+            <li style="color: blue;">app-main</li>
+            <li>gosu-venv</li>
+            <li>statics</li>
+            <li>templates</li>
+            <li>test</li>
     </div>
 </div>

@@ -2,7 +2,7 @@
 
 A Website Based On FastAPI For University Students
 
-<div>
+<div style="background-color : darkblue">
     <h4>Folders:</h4>
     <div>
             <li style="color: blue;">app-main</li>
@@ -13,6 +13,3 @@ A Website Based On FastAPI For University Students
     </div>
 </div>
 
-<li>Apr11 -> adding valid phone </li>
-<li>Apr11 -> adding valid phone line</li>
-<li>Apr11 -> adding code melli validator</li>

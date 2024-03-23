@@ -1,6 +1,8 @@
 from pydantic import Field, constr, field_validator, BaseModel
 from persiantools import jdatetime
 import re
+from typing import Optional
+from dicto import states, states_cities
 
 """"
             Class Models 
@@ -100,4 +102,29 @@ class SerialId(BaseModel):
     def valid_char(cls, v):
         if not re.match(pattern=r'^[\u0600-\u06FF\s]+$', string=v):
             raise ValueError("Serial-id Char Must be in persian alphba")
+        return v
+    
+
+
+
+#State
+
+class State(BaseModel):
+    province: str = Field(min_length=2, max_length=25)
+    city: Optional[str] = Field(min_length=2, max_length=25)
+
+
+    @field_validator('province')
+    @classmethod
+    def valid_province(cls, v):
+        if v not in states:
+            raise ValueError('invaild provine')
+        return v
+    
+    @field_validator('city')
+    @classmethod
+    def valid_city(cls, v, values):
+        if values.data['province'] in states:
+            if v not in  states_cities[values.data['province']] :
+                raise ValueError("Wrong city")
         return v

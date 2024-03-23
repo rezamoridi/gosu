@@ -1,8 +1,12 @@
 from pydantic import Field, constr, field_validator, BaseModel
 from persiantools import jdatetime
 import re
+<<<<<<< HEAD
 from typing import Optional
 from dicto import states, states_cities
+=======
+from states import iran_states
+>>>>>>> beta
 
 """"
             Class Models 
@@ -108,6 +112,7 @@ class SerialId(BaseModel):
 
 
 #State
+<<<<<<< HEAD
 
 class State(BaseModel):
     province: str = Field(min_length=2, max_length=25)
@@ -128,3 +133,15 @@ class State(BaseModel):
             if v not in  states_cities[values.data['province']] :
                 raise ValueError("Wrong city")
         return v
+=======
+class BirthState(BaseModel):
+    state: str = Field(min_length=3, max_length=20)
+
+    @field_validator('state')
+    @classmethod
+    def valid_state(cls, v):
+        if v not in iran_states:
+            raise ValueError("State Error , Please insert a Valid State")
+        return v
+        
+>>>>>>> beta

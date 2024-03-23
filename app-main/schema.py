@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from defined_classes import Date, StudentNumber, SerialId, Name
+from defined_classes import Date, StudentNumber, SerialId, Name, BirthState
 
         
 """"
@@ -13,7 +13,6 @@ class User(BaseModel):
     email : str = "example@gmail.com"
     phone_line: int = 0
     phone_landline: str = None
-    address : str = None
     id_number : int = 0
     id_serial : SerialId = 0
 
@@ -22,6 +21,8 @@ class User(BaseModel):
 class Student(User):
     student_number: StudentNumber
     field_of_study : str
+    birth_city : str | int
+    birth_state : BirthState
     faculty: str
     is_mirage: bool
     is_active : bool

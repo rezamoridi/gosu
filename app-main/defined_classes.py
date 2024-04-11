@@ -131,7 +131,7 @@ class State(BaseModel):
 
 
 #birth
-class BirthState(BaseModel):
+class State(BaseModel):
     state: str = Field(min_length=3, max_length=20)
 
     @field_validator('state')
@@ -139,4 +139,84 @@ class BirthState(BaseModel):
     def valid_state(cls, v):
         if v not in iran_states:
             raise ValueError("State Error , Please insert a Valid State")
+        return v
+
+# city
+class City(BaseModel):
+    city : str = Field(min_length=1, max_length=25)
+
+    @field_validator('city')
+    @classmethod
+    def valid_city(cls, v):
+        persian_unicode = r'^[\u0600-\u06FF\s]+$'
+        if not re.match(pattern=persian_unicode, string=v):
+            raise ValueError("Use persian keywords")
+        return v
+
+
+# phone
+class PhoneNumber(BaseModel):
+    number : str =Field(min_length=11, max_length=11, pattern=r'^09')
+
+    @field_validator('number')
+    @classmethod
+    def valid_state(cls,v):
+        if not v:
+            raise ValueError("invalid number")
+        return v
+    
+
+# phone line
+
+class PhoneLine(BaseModel):
+    number : str = Field(min_length=8, max_length=8, pattern=r'^0')
+
+
+# address
+class Address(BaseModel):
+    state: str
+    city: str
+    detail: str = Field(min_length=5, max_length=100)
+
+    @field_validator("detail")
+    def valid_address(cls, v, values):
+        
+        city = values.data('city')
+        state = values.data('state')
+
+        if city not in v or state not in v:
+            raise ValueError("Invalid state and city in the address")
+        return v
+    
+
+# ID
+class PID(BaseModel):
+    number : int = Field(gt=1000000000, lt=9999999999)
+    
+    def check_code_meli(code):
+        code1 = str(code)
+        L = len(code1)
+    
+        if L < 8 or int(code) == 0:
+            return False
+    
+        code1 = ('0000' + code1)[-10:]
+    
+        if int(code1[3:9]) == 0:
+            return False
+    
+        c = int(code1[9])
+        s = 0
+        for i in range(9):
+            s += int(code1[i]) * (10 - i)
+    
+        s = s % 11
+    
+        return (s < 2 and c == s) or (s >= 2 and c == (11 - s))
+
+    @field_validator("number")
+    @classmethod
+    def valid_id(cls, v):
+        if not cls.check_code_meli(v):
+            raise ValueError("invalid code melli")
         return v

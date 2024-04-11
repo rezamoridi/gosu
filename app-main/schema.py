@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from defined_classes import Date, StudentNumber, SerialId, Name, BirthState
-
+from defined_classes import Date, StudentNumber, SerialId, Name, State, PhoneNumber, PhoneLine, Address, PID
         
 """"
             Users Models 
@@ -11,9 +10,9 @@ class User(BaseModel):
     username : str = "visitor"
     birthdate : Date
     email : str = "example@gmail.com"
-    phone_line: int = 0
-    phone_landline: str = None
-    id_number : int = 0
+    phone_number: PhoneNumber = None
+    phone_landline: PhoneLine = None
+    id_number : PID = 0
     id_serial : SerialId = 0
 
     
@@ -22,7 +21,8 @@ class Student(User):
     student_number: StudentNumber
     field_of_study : str
     birth_city : str | int
-    birth_state : BirthState
+    birth_state : State
+    address : Address
     faculty: str
     is_mirage: bool
     is_active : bool

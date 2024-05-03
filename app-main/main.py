@@ -1,5 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException        # FastAPI
-from persiantools.jdatetime import JalaliDate
+from fastapi import FastAPI, Request, HTTPException, Body      # FastAPI
 # allow to use static files
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
@@ -7,7 +6,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 # Import Models
-from defined_classes import StudentNumber, Name, Date, SerialId, State, PhoneNumber, PhoneLine, Address, PID
+
+from defined_classes import *
+from schema import Student
 
 
 # Instance
@@ -21,13 +22,6 @@ templates = Jinja2Templates(directory="../templates/test")
 
 
 # APIs
-
-"""@app.get("/", response_class=HTMLResponse)
-async def show_form(request: Request):
-    # Render the HTML form
-    return templates.TemplateResponse(request=request, name="index.html")""" # Template -< 
-
-
 """valid studentNumber
         Path Parameter"""
 
@@ -45,7 +39,7 @@ def valid_sn_path(studentNumber: int):
 
 
 @app.get("/", response_model=StudentNumber)
-def valid_sn_query(studentNumber: int):
+def valid_studentnumber_query(studentNumber: int):
     try:
         return StudentNumber(student_number=studentNumber)
     except ValidationError as e:
@@ -57,9 +51,9 @@ def valid_sn_query(studentNumber: int):
 
 
 @app.post("/", response_model=StudentNumber)
-def post_student_number(studentNumber: StudentNumber):
+def post_student_number(studentNumber: int):
     try:
-        return studentNumber
+        return StudentNumber(student_number=studentNumber)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=e.errors()[0]["msg"])
     
@@ -69,7 +63,7 @@ def post_student_number(studentNumber: StudentNumber):
 
 
 @app.post("/name/", response_model=Name)
-def valid_name(name: Name):
+def valid_name(name: str):
     try:
         return name
     except ValidationError as e:
@@ -80,10 +74,10 @@ def valid_name(name: Name):
         POST"""
 
 
-@app.post("/date/", response_model=Date)
-def valid_date(date: Date):
+@app.post("/BirthDate/", response_model=BirthDate)
+def jalaliDate(birthdate: BirthDate):
     try:
-        return date
+        return birthdate
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=e.errors)
 
@@ -116,17 +110,20 @@ def valid_state(state: State):
         POST"""
 
 @app.post("/city")
-def valid_city(city):
-    return True
+def valid_city(city: City):
+    try:
+        return city
+    except ValidationError as e:
+        return HTTPException(status_code=400, detail=e.errors)
 
 
 """ valid address
         POST"""
 
-@app.post('/address')
+@app.post('/address', response_model=Address)
 def valid_address(address:Address):
     try:
-        return Address
+        return address
     except ValidationError as e:
         return HTTPException(status_code=400, detail=e.errors)
 
@@ -135,8 +132,11 @@ def valid_address(address:Address):
         POST"""
 
 @app.post("/postal_code/")
-def valid_postal_code(code):
-    return True
+def valid_postal_code(postal_code: PostalCode):
+    try:
+        return postal_code
+    except ValidationError as e:
+        return HTMLResponse(status_code=400, detail=e.errors)
 
 
 """valid phone number
@@ -164,16 +164,30 @@ def valid_phone_line(phoneline: PhoneLine):
         POST"""
 
 @app.post("/faculty")
-def valid_faculty(faculty):
-        return True
+def valid_faculty(faculty: Faculty):
+    try:
+        return faculty
+    except ValidationError as e:
+        return HTTPException(status_code=400, detail=e.errors)
+    
+
+"""valid field of study
+        POST"""
+
+@app.post('/field/')
+def valid_field(field: FieldOfStudy):
+    try:
+        return field
+    except ValidationError as e:
+        return HTTPException(status_code=400, detail=e.errors)
 
 
 """ marriage status
         POST"""
 
 @app.post("/marriage/")
-def marriage_status(status):
-    return True
+def marriage_status(status: bool):
+    return status
 
 """ valid ID
         POST"""
@@ -184,3 +198,15 @@ def valid_id(id:PID):
         return id
     except ValidationError as e:
         return HTTPException(status_code=400, detail=e.errors)
+    
+"""valid Student
+        POST"""
+@app.post('/student/', response_model=Student)
+def valid_student(student: Student = Body(...)):
+    try:
+        return student
+    except ValidationError as e:
+        HTTPException(status_code=400, detail=e.errors)
+
+
+

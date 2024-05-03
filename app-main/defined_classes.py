@@ -1,9 +1,10 @@
-from pydantic import Field, constr, field_validator, BaseModel
-from persiantools import jdatetime
+from pydantic import Field, constr, field_validator, BaseModel, validator, PastDate
 import re
 from typing import Optional
 from dicto import states, states_cities
 from states import iran_states
+from time import time
+import datetime
 """"
             Class Models 
 """
@@ -45,54 +46,31 @@ class Name(BaseModel):
                 if i == j:
                     raise ValueError("Name Error: Use only chars")
         return v
-        
 
 
 
 #Date
-class Date(BaseModel):
-    year : int = Field(ge=0, lt=jdatetime.JalaliDate.today().year+1)
-    month : int  = Field(ge=0, lt=13)
-    day : int  = Field(ge=0, lt=32)
+class BirthDate(BaseModel):
+    date : datetime.date = Field(description="Must follow jalali date")
 
-    @field_validator('year', mode='before')
-    @classmethod
-    def valid_year(cls, v):
-        if len(str(v)) > 4:
-            raise ValueError("Year Must have 4 digits")
-        return v
-    
-    @field_validator('day')
-    @classmethod
-    def valid_day(cls, v, values):
-        is_leap_year = lambda year: year % 4 == 0
-
-        if not is_leap_year(values.data["year"]) and values.data['month'] == 12 and v >=30:
-            raise ValueError("Date-Day-Error: last month only in Leap years have 30 days")
-        if values.data['month'] > 6 and v > 30:
-            raise ValueError("Date-Day-Error: Fall and Winter have 30-29 days") 
-        return v
+    @field_validator('date')
+    def valid_date(cls, v):
+        if v.year not in range (1320,1403):
+            raise ValueError('Year must be at this range 1320-1403')
         
-
-    def __repr__(cls):
-        return f"{str(cls.year).zfill(4)}-{str(cls.month).zfill(2)}-{str(cls.day).zfill(2)}"
     
-    def __str__(cls) -> str:
-        return f"{str(cls.year).zfill(4)}-{str(cls.month).zfill(2)}-{str(cls.day).zfill(2)}"
-
   
-
 
 #SerialID
 class SerialId(BaseModel):
-    number : int = Field(ge=0)
+    number : int = Field(ge=0, le=99999999)
     char: str = Field(min_length=1, max_length=1)
 
     @field_validator('number')
     @classmethod
     def valid_number(cls, v):
         str_v = str(v)
-
+                                                                # FIX : input value doesnt have a good pattern
         if len(str_v) != 8:
             raise ValueError("Seria-ID lenght Error")
         return v
@@ -138,7 +116,7 @@ class State(BaseModel):
     @classmethod
     def valid_state(cls, v):
         if v not in iran_states:
-            raise ValueError("State Error , Please insert a Valid State")
+            raise ValueError("Please insert a Valid State")
         return v
 
 # city
@@ -148,11 +126,18 @@ class City(BaseModel):
     @field_validator('city')
     @classmethod
     def valid_city(cls, v):
+        cities =open("iranCities.csv", "r").read()
+
         persian_unicode = r'^[\u0600-\u06FF\s]+$'
         if not re.match(pattern=persian_unicode, string=v):
             raise ValueError("Use persian keywords")
-        return v
+        if v not in cities:
+            raise ValueError("City not found")
+        
 
+# Postal code
+class PostalCode(BaseModel):
+    code: int = Field(gt=99999999, lt=10000000000)
 
 # phone
 class PhoneNumber(BaseModel):
@@ -174,49 +159,52 @@ class PhoneLine(BaseModel):
 
 # address
 class Address(BaseModel):
-    state: str
-    city: str
+    state: State
+    city: City
     detail: str = Field(min_length=5, max_length=100)
 
-    @field_validator("detail")
-    def valid_address(cls, v, values):
-        
-        city = values.data('city')
-        state = values.data('state')
-
-        if city not in v or state not in v:
-            raise ValueError("Invalid state and city in the address")
-        return v
     
 
 # ID
 class PID(BaseModel):
-    number : int = Field(gt=1000000000, lt=9999999999)
+    number : int = Field(gt=99999999, lt=9999999999)
     
-    def check_code_meli(code):
-        code1 = str(code)
-        L = len(code1)
-    
-        if L < 8 or int(code) == 0:
-            return False
-    
-        code1 = ('0000' + code1)[-10:]
-    
-        if int(code1[3:9]) == 0:
-            return False
-    
-        c = int(code1[9])
-        s = 0
-        for i in range(9):
-            s += int(code1[i]) * (10 - i)
-    
-        s = s % 11
-    
-        return (s < 2 and c == s) or (s >= 2 and c == (11 - s))
 
     @field_validator("number")
     @classmethod
     def valid_id(cls, v):
-        if not cls.check_code_meli(v):
+        def check_code_meli(code):
+            code1 = str(code)
+            L = len(code1)
+        
+            if L < 8 or int(code) == 0:
+                return False
+        
+            code1 = ('0000' + code1)[-10:]
+        
+            if int(code1[3:9]) == 0:
+                return False
+        
+            c = int(code1[9])
+            s = 0
+            for i in range(9):
+                s += int(code1[i]) * (10 - i)
+        
+            s = s % 11
+            return (s < 2 and c == s) or (s >= 2 and c == (11 - s))
+
+        if not check_code_meli(v):
             raise ValueError("invalid code melli")
         return v
+
+class Faculty(BaseModel):
+    id : int = Field(gt=9, le=99)
+
+    @validator('id')
+    def valid_id(cls,v):
+        if v not in [10,11,12,13,14,15,16,17,18,19,20,23,31,32,33,34,35,89,90]:
+            raise ValueError("Invalid faculty")
+
+class FieldOfStudy(BaseModel):
+    id : int = Field(ge=10, le=19)
+

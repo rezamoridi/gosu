@@ -2,17 +2,12 @@
 
 A Website Based On FastAPI For University Students
 
-<<<<<<< HEAD
 <div style="background-color : darkblue">
     <h4>Folders:</h4>
-=======
 <div>
-<<<<<<< HEAD
     <h1>Folders:</h1>
->>>>>>> b5ea409 (add: More Detail)
-=======
     <h4>Folders:</h4>
->>>>>>> 4026e30 (More Detail)
+
     <div>
             <li style="color: blue;">app-main</li>
             <li>gosu-venv</li>
@@ -21,7 +16,4 @@ A Website Based On FastAPI For University Students
             <li>test</li>
     </div>
 </div>
-<<<<<<< HEAD
 
-=======
->>>>>>> b5ea409 (add: More Detail)

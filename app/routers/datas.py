@@ -1,6 +1,6 @@
 from fastapi import HTTPException, APIRouter
 from pydantic import ValidationError
-from models import data as models
+from schemas import Schemas
 
 
 router = APIRouter()
@@ -8,10 +8,10 @@ router = APIRouter()
 """valid studentNumber
         Path Parameter"""
 
-@router.get("/{studentNumber}", response_model=models.StudentNumber)
+@router.get("/{studentNumber}", response_model=Schemas.StudentNumber)
 def valid_sn_path(studentNumber: int):
     try:
-        return models.StudentNumber(student_number=studentNumber)
+        return Schemas.StudentNumber(student_number=studentNumber)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -20,10 +20,10 @@ def valid_sn_path(studentNumber: int):
         Query Parameter"""
 
 
-@router.get("/", response_model=models.StudentNumber)
+@router.get("/", response_model=Schemas.StudentNumber)
 def valid_studentnumber_query(studentNumber: int):
     try:
-        return models.StudentNumber(student_number=studentNumber)
+        return Schemas.StudentNumber(student_number=studentNumber)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -32,10 +32,10 @@ def valid_studentnumber_query(studentNumber: int):
         Post Body"""
 
 
-@router.post("/", response_model=models.StudentNumber)
+@router.post("/", response_model=Schemas.StudentNumber)
 def post_student_number(studentNumber: int):
     try:
-        return models.StudentNumber(student_number=studentNumber)
+        return Schemas.StudentNumber(student_number=studentNumber)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=e.errors()[0]["msg"])
     
@@ -44,7 +44,7 @@ def post_student_number(studentNumber: int):
         POST"""
 
 
-@router.post("/name/", response_model=models.Name)
+@router.post("/name/", response_model=Schemas.Name)
 def valid_name(name: str):
     try:
         return name
@@ -56,8 +56,8 @@ def valid_name(name: str):
         POST"""
 
 
-@router.post("/BirthDate/", response_model=models.BirthDate)
-def jalaliDate(birthdate: models.BirthDate):
+@router.post("/BirthDate/", response_model=Schemas.BirthDate)
+def jalaliDate(birthdate: Schemas.BirthDate):
     try:
         return birthdate
     except ValidationError as e:
@@ -68,8 +68,8 @@ def jalaliDate(birthdate: models.BirthDate):
         POST"""
 
 
-@router.post("/serial-id/", response_model=models.SerialId)
-def valid_serial(serial_id: models.SerialId):
+@router.post("/serial-id/", response_model=Schemas.SerialId)
+def valid_serial(serial_id: Schemas.SerialId):
     try:
         return serial_id
     except ValidationError as e:
@@ -79,8 +79,8 @@ def valid_serial(serial_id: models.SerialId):
 """ valid State
         POST"""
 
-@router.post("/state/", response_model=models.State)
-def valid_state(state: models.State):
+@router.post("/state/", response_model=Schemas.State)
+def valid_state(state: Schemas.State):
     try:
         return state
     except ValidationError as e:
@@ -92,7 +92,7 @@ def valid_state(state: models.State):
         POST"""
 
 @router.post("/city")
-def valid_city(city: models.City):
+def valid_city(city: Schemas.City):
     try:
         return city
     except ValidationError as e:
@@ -102,8 +102,8 @@ def valid_city(city: models.City):
 """ valid address
         POST"""
 
-@router.post('/address', response_model=models.Address)
-def valid_address(address:models.Address):
+@router.post('/address', response_model=Schemas.Address)
+def valid_address(address:Schemas.Address):
     try:
         return address
     except ValidationError as e:
@@ -114,7 +114,7 @@ def valid_address(address:models.Address):
         POST"""
 
 @router.post("/postal_code/")
-def valid_postal_code(postal_code: models.PostalCode):
+def valid_postal_code(postal_code: Schemas.PostalCode):
     try:
         return postal_code
     except ValidationError as e:
@@ -124,8 +124,8 @@ def valid_postal_code(postal_code: models.PostalCode):
 """valid phone number
         POST"""
 
-@router.post("/phonenumber/", response_model=models.PhoneNumber)
-def valid_phone_number(number: models.PhoneNumber):
+@router.post("/phonenumber/", response_model=Schemas.PhoneNumber)
+def valid_phone_number(number: Schemas.PhoneNumber):
     try:
         return number
     except ValidationError as e:
@@ -134,8 +134,8 @@ def valid_phone_number(number: models.PhoneNumber):
 """valid phone line
         POST"""
 
-@router.post("/phoneline/", response_model=models.PhoneLine)
-def valid_phone_line(phoneline: models.PhoneLine):
+@router.post("/phoneline/", response_model=Schemas.PhoneLine)
+def valid_phone_line(phoneline: Schemas.PhoneLine):
     try:
         return phoneline
     except ValidationError as e:
@@ -146,7 +146,7 @@ def valid_phone_line(phoneline: models.PhoneLine):
         POST"""
 
 @router.post("/faculty")
-def valid_faculty(faculty: models.Faculty):
+def valid_faculty(faculty: Schemas.Faculty):
     try:
         return faculty
     except ValidationError as e:
@@ -157,7 +157,7 @@ def valid_faculty(faculty: models.Faculty):
         POST"""
 
 @router.post('/field/')
-def valid_field(field: models.FieldOfStudy):
+def valid_field(field: Schemas.FieldOfStudy):
     try:
         return field
     except ValidationError as e:
@@ -174,8 +174,8 @@ def marriage_status(status: bool):
 """ valid ID
         POST"""
 
-@router.post("/id/", response_model=models.NationalID)
-def valid_id(id:models.NationalID):
+@router.post("/id/", response_model=Schemas.NationalID)
+def valid_id(id:Schemas.NationalID):
     try:
         return id
     except ValidationError as e:
